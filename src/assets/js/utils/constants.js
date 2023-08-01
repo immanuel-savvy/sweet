@@ -1,12 +1,10 @@
 const DEV = true;
 
-const hostname = DEV
-  ? `http://${"localhost"}`
-  : "https://seminar.udaralinksapp.com";
+const hostname = DEV ? `http://${"localhost"}` : "https://sweet-one.org";
 
-const client_domain = DEV ? `${hostname}:3000` : `https://giitfoundation.org`;
+const client_domain = DEV ? `${hostname}:3000` : `https://sweet-one.org`;
 
-const domain = DEV ? `${hostname}:1450` : `https://seminar.udaralinksapp.com`;
+const domain = DEV ? `${hostname}:1450` : `https://api.sweet-one.org`;
 
 const default_admin = "adminstrators~123seminar~1234567890123";
 
