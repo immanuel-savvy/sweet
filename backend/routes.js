@@ -77,7 +77,13 @@ import {
   update_category,
   update_driver,
   verify_operator,
+  remove_vehicle,
+  update_vehicle,
+  add_vehicle,
+  update_vehicle_driver,
+  vehicles,
 } from "./handlers/operators";
+import { add_bir, bir, birs, remove_bir } from "./handlers/bir";
 
 const router = (app) => {
   app.get("/user/:user_id", user);
@@ -86,6 +92,8 @@ const router = (app) => {
   app.get("/about_statement", about_statement);
   app.get("/mission_vision_statement", mission_vision_statement);
   app.get("/entry", entry);
+  app.get("/birs", birs);
+  app.get("/bir/:_id", bir);
   app.get("/trending_articles/:limit", trending_articles);
   app.get("/article/:article", article);
   app.get("/comments/:article/:skip", comments);
@@ -145,6 +153,10 @@ const router = (app) => {
   app.post("/verify_operator/:operator", verify_operator);
   app.post("/add_driver", add_driver);
   app.post("/drivers", drivers);
+  app.post("/remove_vehicle", remove_vehicle);
+  app.post("/add_vehicle", add_vehicle);
+  app.post("/update_vehicle_driver", update_vehicle_driver);
+  app.post("/update_vehicle", update_vehicle);
   app.post("/remove_driver", remove_driver);
   app.post("/update_driver", update_driver);
   app.post("/driver", driver);
@@ -152,7 +164,10 @@ const router = (app) => {
   app.post("/create_category", create_category);
   app.post("/update_category", update_category);
   app.post("/send_report", send_report);
+  app.post("/add_bir", add_bir);
+  app.post("/remove_bir/:bir", remove_bir);
 
+  app.post("/vehicles", vehicles);
   app.post("/update_vision", update_vision);
   app.post("/update_mission", update_mission);
   app.post("/update_about_statement", update_about_statement);

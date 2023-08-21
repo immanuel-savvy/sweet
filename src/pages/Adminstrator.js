@@ -16,6 +16,7 @@ import Manage_articles from "../sections/dashboard/manage_articles";
 import New_article from "../sections/dashboard/new_article";
 import Unverified_operators from "../sections/dashboard/unverified_operators";
 import D_operators from "../sections/dashboard/d_operators";
+import Manage_bir from "../sections/dashboard/manage_bir";
 
 class Adminstrator extends React.Component {
   constructor(props) {
@@ -51,6 +52,7 @@ class Adminstrator extends React.Component {
       manage_testimonials: <Manage_testimonials />,
       pending_testimonies: <Pending_reviews />,
       video_reviews: <Video_reviews />,
+      manage_bir: <Manage_bir />,
       manage_articles: <Manage_articles />,
       new_article: <New_article />,
       unverified_operators: <Unverified_operators />,

@@ -10,52 +10,27 @@ import Loadindicator from "./loadindicator";
 import File_input from "./file_input";
 import Alert_box from "./alert_box";
 
-class Add_driver extends Handle_file_upload {
+class Add_vehicle extends Handle_file_upload {
   constructor(props) {
     super(props);
 
-    let { driver } = this.props;
-    this.state = { ...driver, driver };
+    let { vehicle } = this.props;
+    this.state = { ...vehicle, vehicle };
   }
 
   is_set = () => {
-    let {
-      image,
-      address,
-      driver_license,
-      description,
-      registration_number,
-      license_plate,
-    } = this.state;
+    let { image, description, registration_number, license_plate } = this.state;
 
-    return (
-      description &&
-      image &&
-      driver_license &&
-      address &&
-      registration_number &&
-      license_plate
-    );
+    return description && image && registration_number && license_plate;
   };
 
   submit = async () => {
-    let { operator } = this.props;
-    let {
-      image,
-      driver_license_filename,
-      driver_license,
-      address,
-      description,
-      registration_number,
-      license_plate,
-      _id,
-    } = this.state;
+    let { operator, toggle } = this.props;
+    let { image, description, registration_number, license_plate, _id } =
+      this.state;
 
-    let driver = {
+    let vehicle = {
       image,
-      driver_license_filename,
-      driver_license,
-      address,
       description,
       registration_number,
       license_plate,
@@ -64,32 +39,29 @@ class Add_driver extends Handle_file_upload {
     };
 
     let result = await post_request(
-      _id ? "update_driver" : "add_driver",
-      driver
+      _id ? "update_vehicle" : "add_vehicle",
+      vehicle
     );
 
     if (result && result._id) {
-      driver._id = result._id;
-      driver.created = result.created;
+      vehicle._id = result._id;
+      vehicle.created = result.created;
 
-      emitter.emit(_id ? "driver_updated" : "new_driver", driver);
+      emitter.emit(_id ? "vehicle_updated" : "new_vehicle", vehicle);
 
-      this.setState({ driver });
+      this.setState({ vehicle }, toggle);
     } else
       this.setState({
         message:
-          (result && result.message) || "Cannot add driver at the moment.",
+          (result && result.message) || "Cannot add vehicle at the moment.",
       });
   };
 
   render() {
-    let { toggle } = this.props;
+    let { toggle, readonly } = this.props;
     let {
-      fullname,
-      address,
       license_plate,
       description,
-      driver_license_filename,
       image,
       message,
       registration_number,
@@ -104,9 +76,7 @@ class Add_driver extends Handle_file_upload {
             <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
               <form>
                 <div className="crs_log_wrap">
-                  <Modal_form_title title="Add Driver" toggle={toggle} />
-
-                  <Form_divider text="Driver Details" />
+                  <Modal_form_title title="Add Vehicle" toggle={toggle} />
 
                   <div className="form-group smalls">
                     <label>Picture*</label>
@@ -116,6 +86,7 @@ class Add_driver extends Handle_file_upload {
                         className="custom-file-input"
                         id="customFile"
                         accept="image/*"
+                        disabled={readonly}
                         onChange={(e) =>
                           this.handle_file(e, "image", null, null, true)
                         }
@@ -152,11 +123,12 @@ class Add_driver extends Handle_file_upload {
                   </div>
 
                   <Text_input
-                    value={fullname}
-                    title="driver fullname"
-                    action={(fullname) =>
+                    value={registration_number}
+                    disabled={readonly}
+                    title="Registration Number"
+                    action={(registration_number) =>
                       this.setState({
-                        fullname,
+                        registration_number,
                         message: "",
                       })
                     }
@@ -164,34 +136,22 @@ class Add_driver extends Handle_file_upload {
                   />
 
                   <Text_input
-                    value={address}
-                    title="Address"
-                    action={(address) =>
+                    value={license_plate}
+                    title="license plate"
+                    disabled={readonly}
+                    action={(license_plate) =>
                       this.setState({
-                        address,
+                        license_plate,
                         message: "",
                       })
                     }
                     important
-                  />
-
-                  <File_input
-                    title="driver license"
-                    action={(e) => this.handle_file(e, "driver_license")}
-                    filename={driver_license_filename}
-                    important
-                    accept="image/*,.doc,.pdf,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    info="Type: PDF, Image, Maxsize: 3MB"
-                    error_message={
-                      this.state[`${"driver_license"}_oversize`]
-                        ? "Too large"
-                        : ""
-                    }
                   />
 
                   <Text_input
                     value={description}
                     title="Description"
+                    disabled={readonly}
                     action={(description) =>
                       this.setState({
                         description,
@@ -201,13 +161,18 @@ class Add_driver extends Handle_file_upload {
                     multiline
                   />
 
-                  <Alert_box message={message} />
-
-                  <Stretch_button
-                    title={_id ? "Update" : "create"}
-                    disabled={!this.is_set()}
-                    action={this.submit}
+                  <Alert_box
+                    type={readonly ? "info" : null}
+                    message={readonly ? "Read-only" : message}
                   />
+
+                  {readonly ? null : (
+                    <Stretch_button
+                      title={_id ? "Update" : "create"}
+                      disabled={!this.is_set()}
+                      action={this.submit}
+                    />
+                  )}
                 </div>
               </form>
             </div>
@@ -218,4 +183,4 @@ class Add_driver extends Handle_file_upload {
   }
 }
 
-export default Add_driver;
+export default Add_vehicle;

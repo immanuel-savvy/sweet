@@ -221,9 +221,25 @@ const countdown = (end_date, return_function, callback, caller) => {
   }, 1000);
 };
 
+const parse_query = (search) => {
+  if (typeof search !== "string" || !search) search = window.location.search;
+
+  if (search.startsWith("?")) search = search.slice(1);
+  search = search.split("&");
+  let obj = new Object();
+
+  search.map((s) => {
+    s = s.split("=");
+    obj[s[0]] = s[1];
+  });
+
+  return obj;
+};
+
 export {
   _id,
   to_title,
+  parse_query,
   gen_random_int,
   generate_random_string,
   email_regex,

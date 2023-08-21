@@ -4,4 +4,6 @@ const verification = (code, fullname) => {
 
 const operator_verified = (operator) => JSON.stringify(operator);
 
-export { verification, operator_verified };
+const bir_profile_created = (bir) => JSON.stringify(bir);
+
+export { verification, operator_verified, bir_profile_created };

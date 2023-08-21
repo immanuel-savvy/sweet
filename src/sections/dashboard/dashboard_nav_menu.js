@@ -19,6 +19,9 @@ class Dashboard_nav_menu extends React.Component {
           title: "operators",
         },
         {
+          title: "manage_bir",
+        },
+        {
           title: "unverified_operators",
         },
         {

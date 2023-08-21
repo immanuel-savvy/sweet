@@ -25,6 +25,7 @@ import Become_an_operator from "./pages/Become_an_operator";
 import Operator_profile from "./pages/Operator";
 import Driver from "./pages/Driver";
 import Find_driver from "./pages/Find_driver";
+import Bir from "./pages/Bir";
 
 const emitter = new Emitter();
 
@@ -170,6 +171,7 @@ class Sweet extends React.Component {
               <Routes>
                 <Route index element={<Home entry={entry} />} />
                 <Route path="about" element={<About />} />
+                <Route path="bir" element={<Bir />} />
                 <Route path="contact" element={<Contact />} />
                 <Route path="testimonials" element={<Testimonials />} />
                 <Route path="news" element={<News />} />

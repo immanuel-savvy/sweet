@@ -8,6 +8,8 @@ import Modal from "./modal";
 import File_a_report from "./report";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { client_domain } from "../assets/js/utils/constants";
+import Operator_vehicles from "./operator_vehicles";
+import { post_request } from "../assets/js/utils/services";
 
 class Driver extends React.Component {
   constructor(props) {
@@ -30,13 +32,30 @@ class Driver extends React.Component {
     });
   };
 
+  toggle_assign = () => this.assign_?.toggle();
+
+  assign = async (vehicle) => {
+    let { driver } = this.props;
+    this.setState({ vehicle });
+
+    this.toggle_assign();
+
+    await post_request("update_vehicle_driver", {
+      vehicle: vehicle._id,
+      driver: driver?.driver?._id || driver?._id,
+    });
+  };
+
   on_report = () => this.setState({ reported: true });
 
   render() {
-    let { copied, reported } = this.state;
+    let { copied, reported, vehicle: vehicle_ } = this.state;
     let { driver, operator, in_op, full, remove, edit } = this.props;
+    console.log(driver);
     driver = driver.driver || driver;
-    let { image, image_file_hash, license_plate, fullname, _id } = driver;
+    let { image, image_file_hash, vehicle, fullname, _id } = driver;
+    vehicle = vehicle_ || vehicle;
+
     let {
       user,
       image: op_image,
@@ -88,16 +107,18 @@ class Driver extends React.Component {
             ) : null}
           </div>
           <div className="crs_grid_caption">
-            <div className="crs_flex">
-              <div className="crs_fl_first">
-                <div className="crs_inrolled">Driver</div>
-              </div>
-              <div className="crs_fl_last">
-                <div className="crs_cates cl_3">
-                  <span>{license_plate}</span>
+            {vehicle ? (
+              <div className="crs_flex">
+                <div className="crs_fl_first">
+                  <div className="crs_inrolled">Vehicle</div>
+                </div>
+                <div className="crs_fl_last">
+                  <div className="crs_cates cl_3">
+                    <span>{vehicle.license_plate}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : null}
             <div className="crs_title">
               <h3>
                 <Link
@@ -168,12 +189,13 @@ class Driver extends React.Component {
               </div>
               <div className="crs_fl_last">
                 <div className="crs_price">
-                  <h2>
-                    <span className="currency"></span>
-                    <span className="theme-cl">
-                      {/* {commalise_figures()} */}
-                    </span>
-                  </h2>
+                  {edit ? (
+                    <h2 className="cursor-pointer" onClick={this.toggle_assign}>
+                      <span className="currency">
+                        {vehicle ? "Reessign" : "Assign"} Vehicle
+                      </span>
+                    </h2>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -185,6 +207,14 @@ class Driver extends React.Component {
             on_add={this.on_report}
             driver={driver}
             toggle={this.toggle_report}
+          />
+        </Modal>
+
+        <Modal ref={(assign_) => (this.assign_ = assign_)}>
+          <Operator_vehicles
+            operator={operator}
+            assign={this.assign}
+            toggle={this.toggle_assign}
           />
         </Modal>
       </div>

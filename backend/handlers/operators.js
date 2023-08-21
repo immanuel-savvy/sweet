@@ -4,8 +4,10 @@ import {
   GLOBALS,
   OPERATORS,
   OPERATOR_DRIVERS,
+  OPERATOR_VEHICLES,
   REPORTS,
   USERS,
+  VEHICLES,
 } from "../ds/conn";
 import { send_mail } from "./users";
 import { remove_image, save_file, save_image } from "./utils";
@@ -141,11 +143,61 @@ const drivers = (req, res) => {
   res.json({ ok: true, data });
 };
 
+const add_vehicle = (req, res) => {
+  let vehicle = req.body;
+  vehicle.image = save_image(vehicle.image);
+
+  let r = VEHICLES.write(vehicle);
+  vehicle._id = r._id;
+  vehicle.created = r.created;
+
+  OPERATOR_VEHICLES.write({ vehicle: r._id, operator: vehicle.operator });
+
+  res.json({ ok: true, data: vehicle });
+};
+
+const update_vehicle_driver = (req, res) => {
+  let { vehicle, driver } = req.body;
+
+  DRIVERS.update(driver, { vehicle });
+  VEHICLES.update(vehicle, { driver });
+
+  res.end();
+};
+
+const update_vehicle = (req, res) => {
+  let vehicle = req.body;
+  if (!vehicle._id) return res.end();
+
+  vehicle.image = save_image(vehicle.image);
+
+  let result = VEHICLES.update(vehicle._id, vehicle);
+  vehicle._id = result._id;
+  vehicle.created = result.created;
+
+  res.json({ ok: true, data: vehicle });
+};
+
+const remove_vehicle = (req, res) => {
+  let { vehicle, operator } = req.body;
+  if (!vehicle) return res.end();
+
+  let result = VEHICLES.remove(vehicle);
+
+  if (result) {
+    remove_image(result.image);
+    result.driver && DRIVERS.update(result.driver, { vehicle: null });
+  }
+
+  OPERATOR_VEHICLES.remove({ vehicle, operator });
+
+  res.end();
+};
+
 const add_driver = (req, res) => {
   let driver = req.body;
 
   driver.image = save_image(driver.image);
-  driver.driver_license = save_image(driver.driver_license);
 
   let result = DRIVERS.write(driver);
   driver._id = result._id;
@@ -179,6 +231,7 @@ const remove_driver = (req, res) => {
   if (result) {
     remove_image(result.image);
     remove_image(result.driver_license);
+    result.vehicle && VEHICLES.update(result.vehicle, { driver: null });
   }
 
   OPERATOR_DRIVERS.remove({ driver, operator });
@@ -252,10 +305,22 @@ const send_report = (req, res) => {
   res.json({ ok: true, data: { _id: result._id } });
 };
 
+const vehicles = (req, res) => {
+  let { query, operator } = req.params;
+
+  res.json({
+    ok: true,
+    data: operator
+      ? OPERATOR_VEHICLES.read({ operator })
+      : VEHICLES.read(query),
+  });
+};
+
 export {
   remove_driver,
   request_to_become_an_operator,
   driver_page,
+  vehicles,
   report_categories,
   send_report,
   update_category,
@@ -264,6 +329,10 @@ export {
   operator,
   add_driver,
   update_driver,
+  remove_vehicle,
+  update_vehicle,
+  add_vehicle,
+  update_vehicle_driver,
   unverified_operators,
   drivers,
   driver,

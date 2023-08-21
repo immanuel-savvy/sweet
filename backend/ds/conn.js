@@ -16,8 +16,11 @@ let USERS,
   COMMENTS,
   REPLIES,
   REPORTS,
+  BIR,
   OPERATORS,
   TRENDING_ARTICLES,
+  VEHICLES,
+  OPERATOR_VEHICLES,
   GLOBALS;
 
 const ds_conn = () => {
@@ -25,9 +28,12 @@ const ds_conn = () => {
 
   ADMINSTRATORS = gds.folder("adminstrators");
   USERS = gds.folder("users");
+  VEHICLES = gds.folder("vehicles");
+  OPERATOR_VEHICLES = gds.folder("operator_vehicles", "operator", "vehicle");
   CATEGORIES = gds.folder("categories");
   REPORTS = gds.folder("reports");
-  DRIVERS = gds.folder("drivers");
+  DRIVERS = gds.folder("drivers", null, "vehicle");
+  BIR = gds.folder("bir", null, "user");
   OPERATOR_DRIVERS = gds.folder("operator_drivers", "operator", "driver");
   OPERATORS = gds.folder("operators", null, "user");
   ARTICLE_CATEGORIES = gds.folder("article_categories");
@@ -45,10 +51,13 @@ const ds_conn = () => {
 export {
   gds,
   OPERATORS,
+  BIR,
   USERS,
   ARTICLES,
   CATEGORIES,
   ARTICLE_CATEGORIES,
+  OPERATOR_VEHICLES,
+  VEHICLES,
   TRENDING_ARTICLES,
   REPORTS,
   ADMIN_HASH,
